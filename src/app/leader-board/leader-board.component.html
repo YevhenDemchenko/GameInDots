@@ -1,1 +1,12 @@
-<p>leader-board works!</p>
+<div *ngIf="isLoad" style="height: 90%">
+  <h2 style="margin-left: 2em">Leader board</h2>
+
+  <div style="overflow-y: scroll; height: 90%;">
+    <div *ngFor="let winner of winnersList | async">
+    <span style="display: flex; width: 19em">
+      <span style="width: 6em;">{{winner.winner}}</span>
+      <span>{{winner.date}}</span>
+    </span>
+    </div>
+  </div>
+</div>

@@ -1,20 +1,21 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {from, Observable, of, Subject, Subscription} from 'rxjs';
 import {HttpService} from '../share/services/http.service';
 import {SettingsModel} from '../share/models/settings.model';
 import {SquareModel} from '../share/models/square.model';
 import {concatMap, delay, takeUntil} from 'rxjs/operators';
+import {WinnersModel} from '../share/models/winners.model';
 
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.scss']
 })
-export class GameComponent implements OnInit {
+export class GameComponent implements OnInit, OnDestroy {
 
   constructor(private httpService: HttpService) { }
 
-  private destroyStream$ = new Subject<void>();
+  private stopGameSubject = new Subject<void>();
 
   observableSettings: Observable<SettingsModel>;
   settingsSubscriptions: Subscription = new Subscription();
@@ -23,7 +24,10 @@ export class GameComponent implements OnInit {
   userName = '';
   winner = '';
   contentSize: number;
+  widthSquare: number;
+  heightSquare: number;
   playAgain = false;
+  isGameInProgress = false;
   pointsComputer = 0;
   pointsUser = 0;
   pointer = 0;
@@ -65,24 +69,30 @@ export class GameComponent implements OnInit {
     switch (this.selectedMode.field) {
       case 5:
         this.contentSize = 300;
+        this.widthSquare = 50;
+        this.heightSquare = 50;
         break;
       case 10:
-        this.contentSize = 560;
+        this.contentSize = 500;
+        this.widthSquare = 45;
+        this.heightSquare = 45;
         break;
       case 15:
-        this.contentSize = 810;
+        this.contentSize = 650;
+        this.widthSquare = 40;
+        this.heightSquare = 40;
         break;
     }
   }
 
   startPlay() {
+    this.isGameInProgress = true;
     this.initGameField();
-    this.destroyStream$.next();
+    this.stopGameSubject.next();
 
     const randomSquaresArr: number[] = this.randomSquares();
     const settingDelay = this.selectedMode.delay;
 
-    // start random activation
     from(randomSquaresArr)
       .pipe(
         concatMap(x => of(x)
@@ -90,7 +100,7 @@ export class GameComponent implements OnInit {
             delay(settingDelay)
           )
         ),
-        takeUntil(this.destroyStream$)
+        takeUntil(this.stopGameSubject)
       )
       .subscribe((id) => {
         this.toggleActiveSquares(id);
@@ -139,47 +149,45 @@ export class GameComponent implements OnInit {
     if (square.active) {
       this.squaresArray
         .find((element) => this.checkStatusSquare(element, square) && (element.win = true));
-      // this.pointsUser++;
     }
   }
 
   private checkStatusSquare = ({id, loss, win}, square) => id === square.id && !loss && !win;
 
-
   private endGame() {
-    let pointsComputer = 0;
-    let pointsPlayer = 0;
+    this.pointsComputer = 0;
+    this.pointsUser = 0;
 
     this.squaresArray.forEach((item: SquareModel) => {
-      item.loss && (pointsComputer += 1);
-      item.win && (pointsPlayer += 1);
+      // tslint:disable-next-line:no-unused-expression
+      item.loss && (this.pointsComputer += 1);
+      // tslint:disable-next-line:no-unused-expression
+      item.win && (this.pointsUser += 1);
     });
 
-    if (pointsComputer > this.squaresArray.length / 2 || pointsPlayer > this.squaresArray.length / 2) {
-
+    if (this.pointsComputer > this.squaresArray.length / 2 || this.pointsUser > this.squaresArray.length / 2) {
       this.playAgain = true;
-
-      console.log(this.pointsUser);
-      console.log(this.pointsComputer);
-
-
-      console.log(pointsComputer);
-      console.log(pointsPlayer);
-      const name = pointsComputer > pointsPlayer ? 'Computer' : this.userName;
-      const date = new Date().toLocaleString();
-
-      // const winner = new WinnerModel({winner: name, date});
+      const name = this.pointsComputer > this.pointsUser ? 'Computer' : this.userName;
 
       this.showGameResult(name);
+      this.sendResult();
 
-      // this.apiService.sentResult(winner);
-      this.destroyStream$.next();
-
+      this.isGameInProgress = false;
+      this.stopGameSubject.next();
     }
   }
 
   private showGameResult(name) {
     this.winner = name;
-    console.log(this.winner);
+  }
+
+  public sendResult() {
+    this.httpService.sendResult(new WinnersModel({winner: this.winner, date:
+        new Date().getHours() + ':' + new Date().getMinutes() + '; ' + new Date().getDate() + ' '
+        + new Date().toLocaleString('eng', { month: 'long' }) + ' ' + new Date().getFullYear()}));
+  }
+
+  ngOnDestroy() {
+    this.settingsSubscriptions.unsubscribe();
   }
 }

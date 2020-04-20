@@ -2,28 +2,26 @@
   <form #editForm="ngForm" >
     <mat-form-field appearance="outline" >
       <mat-label>Pick game mode</mat-label>
-      <mat-select placeholder="Pick game mode" name="gameMode" #gameMode [(ngModel)]="selectedMode">
+      <mat-select [disabled]="isGameInProgress" required placeholder="Pick game mode" name="gameMode" [(ngModel)]="selectedMode">
         <mat-option *ngFor="let set of settingsArray" [value]="set">{{set.name}}</mat-option>
       </mat-select>
     </mat-form-field>&nbsp;&nbsp;
     <mat-form-field appearance="outline" >
       <mat-label>Enter your name</mat-label>
-      <input type="text" matInput [(ngModel)]="userName" name="name" placeholder="Enter your name"/>
+      <input type="text" [disabled]="isGameInProgress" required matInput [(ngModel)]="userName" name="name" placeholder="Enter your name"/>
     </mat-form-field>&nbsp;&nbsp;
-    <button (click)="startPlay()" color="primary" mat-flat-button>{{playAgain ? 'play Again' : 'Play'}}</button>
+    <button [disabled]="!editForm.valid" (click)="startPlay()" color="primary" mat-flat-button>{{playAgain ? 'play Again' : 'Play'}}</button>
   </form>
 
-  <span *ngIf="playAgain" class="winnerText">{{winner}}</span>
-
+  <span *ngIf="playAgain" class="gameText">{{winner}} won</span>
+  <span *ngIf="isGameInProgress" class="gameText">{{userName}}: {{pointsUser}}; Computer: {{pointsComputer}}</span>
   <div class="gameFieldDiv" [ngStyle]="{ 'width.px': contentSize}">
-   <!-- <table id="gameField">
-      <tbody id="tbody"></tbody>
-    </table>-->
     <div *ngFor="let square of squaresArray; let i = index" [attr.data-index]="i"
          (click)="userClickOnSquare(square)"
          [class.active]="square.active"
          [class.win]="square.win"
          [class.losing]="square.loss"
-         class="square"></div>
+         class="square"
+         [ngStyle]="{ 'width.px': widthSquare, 'height.px': heightSquare}"></div>
   </div>
 </div>
