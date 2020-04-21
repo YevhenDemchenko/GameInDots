@@ -1,6 +1,6 @@
 <div *ngIf="isLoad" class="root">
   <form #editForm="ngForm" >
-    <mat-form-field appearance="outline" >
+    <mat-form-field appearance="outline">
       <mat-label>Pick game mode</mat-label>
       <mat-select [disabled]="isGameInProgress" required placeholder="Pick game mode" name="gameMode" [(ngModel)]="selectedMode">
         <mat-option *ngFor="let set of settingsArray" [value]="set">{{set.name}}</mat-option>
@@ -10,7 +10,7 @@
       <mat-label>Enter your name</mat-label>
       <input type="text" [disabled]="isGameInProgress" required matInput [(ngModel)]="userName" name="name" placeholder="Enter your name"/>
     </mat-form-field>&nbsp;&nbsp;
-    <button [disabled]="!editForm.valid" (click)="startPlay()" color="primary" mat-flat-button>{{playAgain ? 'play Again' : 'Play'}}</button>
+    <button [disabled]="!editForm.valid" (click)="startPlay()" style="background-color: #7b8d93; color: white" mat-flat-button>{{playAgain ? 'play Again' : 'Play'}}</button>
   </form>
 
   <span *ngIf="playAgain" class="gameText">{{winner}} won</span>

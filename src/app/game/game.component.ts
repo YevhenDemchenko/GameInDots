@@ -48,7 +48,6 @@ export class GameComponent implements OnInit, OnDestroy {
         Object.keys(data).forEach( (item) => {
             this.settingsArray.push(new SettingsModel(item, data[item].delay, data[item].field));
         });
-        console.log(this.settingsArray);
         this.isLoad = true;
       },
       error: error => {
