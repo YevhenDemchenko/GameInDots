@@ -18,6 +18,7 @@ export class HttpService {
 
   URL_SETTINGS = 'http://starnavi-frontend-test-task.herokuapp.com/game-settings';
   URL_WINNERS = 'http://starnavi-frontend-test-task.herokuapp.com/winners';
+
   subscribeEvent = new BehaviorSubject([]);
 
   getSettings(): Observable<SettingsModel> {

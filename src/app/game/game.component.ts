@@ -20,23 +20,20 @@ export class GameComponent implements OnInit, OnDestroy {
   observableSettings: Observable<SettingsModel>;
   settingsSubscriptions: Subscription = new Subscription();
   settingsArray: SettingsModel[] = [];
+  squaresArray: SquareModel[] = [];
   selectedMode: SettingsModel;
   userName = '';
   winner = '';
+  heightSquare: number;
   contentSize: number;
   widthSquare: number;
-  heightSquare: number;
   playAgain = false;
   isGameInProgress = false;
   pointsComputer = 0;
   pointsUser = 0;
-  pointer = 0;
-
-  squaresArray: SquareModel[] = [];
-
   isLoad: boolean;
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.isLoad = false;
     this.loadSettings();
   }
@@ -89,7 +86,7 @@ export class GameComponent implements OnInit, OnDestroy {
     this.initGameField();
     this.stopGameSubject.next();
 
-    const randomSquaresArr: number[] = this.randomSquares();
+    const randomSquaresArr: number[] = this.selectRandomSquares();
     const settingDelay = this.selectedMode.delay;
 
     from(randomSquaresArr)
@@ -106,29 +103,25 @@ export class GameComponent implements OnInit, OnDestroy {
 
         setTimeout(() => {
           this.toggleActiveSquares(id);
-
           this.userDontClickOnSquare(id);
-
           this.endGame();
         }, settingDelay);
       });
   }
 
-  private randomSquares(): number[] {
+  private selectRandomSquares(): number[] {
     const min = 0;
-    const maxNumberSquares: number = this.squaresArray.length;
-
     const exitIdNumbers: number[] = [];
     const result: number[] = [];
 
-    for (let i = min; i < maxNumberSquares; i++) {
+    for (let i = min; i < this.squaresArray.length; i++) {
       exitIdNumbers.push(i);
     }
 
-    for (let i = 0; i < maxNumberSquares; i++) {
+    for (const i of this.squaresArray) {
       const range = Math.floor(Math.random() * (exitIdNumbers.length - min)) + min;
-      const firstElement = exitIdNumbers.splice(range, 1)[0];
-      result.push(firstElement);
+      const element = exitIdNumbers.splice(range, 1)[0];
+      result.push(element);
     }
 
     return result;
@@ -140,8 +133,8 @@ export class GameComponent implements OnInit, OnDestroy {
 
   private userDontClickOnSquare(squareId: number) {
     this.squaresArray
-      .find((element) => this.checkStatusSquare(element, {id: squareId}) && (element.loss = true));
-    this.pointer++;
+      .find((element) =>
+        this.checkStatusSquare(element, {id: squareId}) && (element.loss = true));
   }
 
   userClickOnSquare(square: SquareModel) {

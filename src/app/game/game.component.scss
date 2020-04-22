@@ -3,14 +3,20 @@
   flex-direction: column;
   align-items: center;
 }
+
+.buttonStartPlay {
+  background-color: #7b8d93;
+  color: white;
+}
+
 .gameText {
+  color: #8b8b8b;
+  font-size: 20px;
   margin: 0.5em;
-  font-family: SansSerif, "Helvetica Neue", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-weight: bold;
 }
-#gameField {
-  border-collapse: collapse;
-}
+
 .gameFieldDiv {
   display: flex;
   flex-wrap: wrap;
@@ -18,20 +24,22 @@
   justify-content: center;
   margin-bottom: 1em;
 }
+
 .square {
   border: 1px solid #d1d1d1;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 .active {
-  background: #77b9fa;
+  background: #42d8e8;
 }
 
 .win {
-  background: green;
+  background: #00e871;
 }
 
-.losing {
-  background: darkred;
+.loss {
+  background: #e85a5f;
 }

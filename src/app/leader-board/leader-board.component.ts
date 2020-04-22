@@ -15,7 +15,7 @@ export class LeaderBoardComponent implements OnInit {
   winnersList: Observable<WinnersModel[]>;
   isLoad: boolean;
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.isLoad = false;
     this.loadWinners();
   }

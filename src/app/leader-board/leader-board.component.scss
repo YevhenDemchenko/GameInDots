@@ -1,4 +1,29 @@
+.root {
+  height: 85vh;
+  overflow-y: scroll;
+}
+.headerText {
+  margin-left: 2em;
+  color: #888888;
+}
 span {
-  margin: 1em;
   font-size: 15px;
+}
+.winnerDiv {
+  width: 20em;
+  margin: 10px;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.1);
+  height: 3.5em;
+  display: flex;
+}
+.winnerName {
+  width: 6em;
+  display: flex;
+  align-items: center;
+  margin-left: 1em;
+}
+.winnerDate {
+  display: flex;
+  align-items: center;
 }
